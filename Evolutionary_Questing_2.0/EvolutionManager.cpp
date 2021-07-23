@@ -166,7 +166,7 @@ void UEvolutionManager::SelectRoulette()
 	// Hold the sum of fitness total value
 	int sumOfFitness = 0;
 
-	//std::cout << "loop1" << std::endl;
+	// Loop 1
 	// Loop through the population and increment the sum of fitness values accordingly
 	for (int i = 0; i < m_pQuestMgr->vpPopulation.size(); i++)
 	{
@@ -178,7 +178,7 @@ void UEvolutionManager::SelectRoulette()
 		sumOfFitness += (m_pQuestMgr->vpPopulation[i]->m_iTotalFitness);
 	}
 
-	//std::cout << "loop2" << std::endl;
+	// Loop 2
 	// Loop through the population and select maxPairs of parent solutions 
 	for (int i = 0; i < m_iMaxPairs; i++)
 	{
@@ -189,7 +189,7 @@ void UEvolutionManager::SelectRoulette()
 		// Create pair struct to hold both parents as one object
 		FPair parentPair;
 
-		//std::cout << "loop2.1" << std::endl;
+		//Loop 2.1
 		// If the random number generated falls within the probaility value of
 		// a population solution then add it to the pair object as one of the parents.
 		for (int j = 0; j < tempVec.size(); j++)
@@ -201,7 +201,7 @@ void UEvolutionManager::SelectRoulette()
 			}
 		}
 
-		//std::cout << "loop2.2" << std::endl;
+		// Loop 2.2
 		for (int j = 0; j < tempVec.size(); j++)
 		{
 			if (tempVec[j] >= r2)
@@ -219,9 +219,11 @@ void UEvolutionManager::SelectRoulette()
 	}
 }
 
+
 struct fitnessCompClass {
 	bool operator() (UQuest* a, UQuest* b) { return (a->m_iTotalFitness < b->m_iTotalFitness); }
 } fitnessCompObj;
+
 
 // Not yet used. May be used in the next unit
 void UEvolutionManager::SelectRanked()
@@ -232,6 +234,7 @@ void UEvolutionManager::SelectRanked()
 	// Array to hold the population sorted by fitness
 	std::vector<UQuest*> tempVecSortedPop;
 
+	// Loop 1
 	// Add all quests to the sort array
 	for (int i = 0; i < m_pQuestMgr->vpPopulation.size(); i++)
 		tempVecSortedPop.push_back(m_pQuestMgr->vpPopulation[i]);
@@ -244,6 +247,7 @@ void UEvolutionManager::SelectRanked()
 
 	std::vector<double> probs;
 
+	// Loop 2
 	for (int i = 0; i < tempVecSortedPop.size(); i++)
 	{
 		//calculates raks probablility i = rank
@@ -257,6 +261,7 @@ void UEvolutionManager::SelectRanked()
 	// variable to hold the sum of all of the probabilities (should be 100%)
 	int sumOfRankedFitness = 0;
 
+	// Loop 3
 	// Loop through the population and increment the sum of fitness values accordingly
 	// so that the probabilities stack ready to be selected from eq |  prob1 |   prob2 = prob1 +prob2     |		prob3 = prob2 + prob3			| etc
 	for (int i = 0; i < probs.size(); i++)
@@ -271,6 +276,7 @@ void UEvolutionManager::SelectRanked()
 		sumOfRankedFitness += static_cast<int>(probs[i]);
 	}
 
+	// Loop 4
 	// Loop though maxPairs to select all parent pairs
 	for (int i = 0; i < m_iMaxPairs; i++)
 	{
@@ -280,6 +286,7 @@ void UEvolutionManager::SelectRanked()
 
 		FPair parentPair{};
 
+		// Loop 4.1
 		for (int j = 0; j < stackedProbabilities.size(); j++)
 		{	
 			// If the random number generated falls within the probaility value of
@@ -291,6 +298,7 @@ void UEvolutionManager::SelectRanked()
 			}
 		}
 
+		// Loop 4.2
 		// If the random number generated falls within the probaility value of
 		// a population solution then add it to the pair object as one of the parents.
 		for (int j = 0; j < stackedProbabilities.size(); j++)
@@ -316,6 +324,7 @@ void UEvolutionManager::Combine()
 {
 	m_aChildren.clear();
 
+	// Loop 1
 	for (int i = 0; i < m_aParents.size(); i++)
 	{
 		// Create the two new children
@@ -350,6 +359,7 @@ void UEvolutionManager::Combine()
 
 void UEvolutionManager::CalculateFrequencySel(Ffrequency_Count* count)
 {
+	// Loop 1
 	// Loop which caounts the the amount of each quest type element in the current population
 	for (int i = 0; i < m_aChildren.size(); i++)
 	{
@@ -452,9 +462,11 @@ void UEvolutionManager::Mutate()
 		// misssing type element
 		if (m_CurrentFreqInfoSel.lowTypeFreq)
 		{
+			// Loop 1
 			// for each type element that is missing 
 			for (int i = 0; i < m_CurrentFreqInfoSel.LowTypeFreqs.size(); i++)
 			{
+				// Loop 1.1
 				// add in 5 random ones
 				for (int j = 0; j < m_iReintroRate; j++)
 				{
@@ -472,6 +484,7 @@ void UEvolutionManager::Mutate()
 		// missing distance 
 		if (m_CurrentFreqInfoSel.lowDistFreq)
 		{	
+			// Loop 2
 			// for each distance banding that is missing
 			for (int i = 0; i < m_CurrentFreqInfoSel.LowDistFreqs.size(); i++)
 			{
@@ -506,6 +519,7 @@ void UEvolutionManager::Mutate()
 					}
 				}
 
+				// Loop 2.1
 				while (count < m_iReintroRate)
 				{
 					// Generate random index 
@@ -544,10 +558,12 @@ void UEvolutionManager::Survive()
 	// Temperary vector used to hold what will be the next generation of solutions
 	std::vector<UQuest*> tempNewPop;
 
+	// Loop 1 
 	// Evaluate the child solution so that all fittnesses are updated
 	for (int i = 0; i < m_aChildren.size(); i++)
 		Evaluate(m_aChildren[i]);
 
+	// Loop 2
 	// Loop through the current population and include quests accepted but 
 	// not completed in the next generation by default
 	for (int i = 0; i < m_pQuestMgr->vpPopulation.size(); i++)
@@ -559,6 +575,7 @@ void UEvolutionManager::Survive()
 	// Array to hold the population sorted by fitness
 	std::vector<UQuest*> tempSortPop;
 
+	// Loop 3
 	// Add all children to the sort array
 	for (int i = 0; i < m_aChildren.size(); i++)
 		tempSortPop.push_back(m_aChildren[i]);
@@ -571,6 +588,7 @@ void UEvolutionManager::Survive()
 
 	std::vector<double> probs;
 
+	// Loop 4
 	for (int i = 0; i < tempSortPop.size(); i++)
 	{
 		//calculates ranks probablility i = rank
@@ -581,6 +599,7 @@ void UEvolutionManager::Survive()
 	std::vector<double> stackedProbabilities;
 	double sumOfRankedFitness = 0;
 
+	// Loop 5
 	// Loop through the population and increment the sum of fitness values accordingly
 	for (int i = 0; i < probs.size(); i++)
 	{
@@ -592,6 +611,7 @@ void UEvolutionManager::Survive()
 		sumOfRankedFitness += probs[i];
 	}
 
+	// Loop 6
 	// Loop though the remaining space in the next generation and select at random
 	// the children that will be added based on their fitness proportionate probailities
 	while(tempNewPop.size() < m_iMaxPopulation)
@@ -617,6 +637,7 @@ void UEvolutionManager::Survive()
 	// Empty the quest managers population list
 	m_pQuestMgr->vpPopulation.clear();
 
+	// Loop 7
 	// Add the new generation to the quest manager
 	for (int i = 0; i < tempNewPop.size(); i++)
 		m_pQuestMgr->vpPopulation.push_back(tempNewPop[i]);
@@ -624,6 +645,7 @@ void UEvolutionManager::Survive()
 
 void UEvolutionManager::CalculateFrequencyFin(Ffrequency_Count* count)
 {
+	// Loop 1
 	// Loop which caounts the the amount of each quest type element in the current population
 	for (int i = 0; i < m_pQuestMgr->vpPopulation.size(); i++)
 	{
@@ -687,6 +709,7 @@ void UEvolutionManager::DisplayChangeSel()
 
 	std::vector<float> percentIncrease;
 
+	// Loop 1
 	for (int i = 0; i < m_CurrentFreqInfoSel.TypeFreqs.size(); i++)
 	{
 		// Compare current and previous frequency data to get the increase amount
@@ -705,7 +728,7 @@ void UEvolutionManager::DisplayChangeSel()
 	m_CurrentFreqInfoSel.FetchChange	= percentIncrease[2];
 	m_CurrentFreqInfoSel.ExploreChange	= percentIncrease[3];
 
-
+	// Loop 2
 	for (int i = 0; i < m_CurrentFreqInfoSel.DistFreqs.size(); i++)
 	{
 		// Compare current and previous frequency data to get the increase amount
@@ -778,6 +801,7 @@ void UEvolutionManager::DisplayChangeFin()
 
 	std::vector<float> percentIncreaseFin;
 
+	// Loop 1 
 	for (int i = 0; i < m_CurrentFreqInfoFin.TypeFreqs.size(); i++)
 	{
 		// Compare surrent and previous frequency data to get the increase amount
@@ -796,6 +820,7 @@ void UEvolutionManager::DisplayChangeFin()
 	m_CurrentFreqInfoFin.FetchChange		= percentIncreaseFin[2];
 	m_CurrentFreqInfoFin.ExploreChange		= percentIncreaseFin[3];
 
+	// Loop 2
 	for (int i = 0; i < m_CurrentFreqInfoFin.DistFreqs.size(); i++)
 	{
 		// Compare current and previous frequency data to get the increase amount
